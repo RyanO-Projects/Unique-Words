@@ -6,6 +6,8 @@
 
 int main(){
     std::ifstream inFile("TheRaven.txt");
+    std::set<std::string> words;
+    std::string line;
 
     if(inFile)
         std::cout << "File exists, continuing operation." << std::endl;
@@ -14,7 +16,18 @@ int main(){
         exit(0);
     }
 
-    while(inFile){
+    std::string word;    
+    std::string charWord;
+    while(inFile >> word){
+        charWord = "";
+        for(int i = 0; i < word.size(); i++){
+            if(isalnum(word[i]))
+                charWord += word[i];
+        }
+        words.insert(charWord);
+    }
 
+    for(std::string element : words){
+        std::cout << element << std::endl;
     }
 }
