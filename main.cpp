@@ -5,13 +5,14 @@
 // onward I will be omitting any uses of it in my code.
 
 // Function prototype for handling strings with '-' in them
-std::string splitWords(std::string, std::set<std::string>);
+void hyphenatedWords(std::string, std::set<std::string>*);
 
 int main(){
     std::ifstream inFile("TheRaven.txt");
     std::set<std::string> words;
     std::string line;
 
+    // Ensure file exists
     if(inFile)
         std::cout << "File exists, continuing operation." << std::endl;
     else{
@@ -19,40 +20,55 @@ int main(){
         exit(0);
     }
 
+
     std::string word;    
-    std::string charWord;
+    // While there are words in the file
     while(inFile >> word){
-        charWord = "";
+        std::string charWord = "";
         bool hyphen = false;
 
-        for(int i = 0; i < word.size(); i++){
-            if(word[i] == '-')
-                splitWords(word, words);
+        // Find if the current word is hyphenated, pass to hyphenatedWords() if true.
+        for(char letter : word){
+            if((letter == '-' || letter == '!') && hyphen == false){
+                hyphenatedWords(word, &words);
                 hyphen = true;
+            }
         }
 
+
+        // If current word is not hyphenated, nothing else needs to be done.
         if(!hyphen){
-            for(int i = 0; i < word.size(); i++){
-                if(isalnum(word[i]))
-                    charWord += word[i];
+            for(char letter : word){
+                if(isalnum(letter))
+                    charWord += letter;
             }
         }
         
         words.insert(charWord);
     }
 
+    // Display words in the set
     for(std::string element : words){
         std::cout << element << std::endl;
     }
 }
 
+// Function that takes hyphenated words, splits them into individual words, adds them to the set.
+void hyphenatedWords(std::string wordString, std::set<std::string> *wordSet){
+    std::string newWord;
 
-std::string splitWords(std::string wordString, std::set<std::string> *wordSet){
-    int hyphenCount = 1;
-    
-    for(int i = 0; i < wordString.size(); i++)
-    {
-        if(wordString[i] == '-')
-            hyphenCount += 1;
+    // Iterate through each character in wordString
+    for(char letter : wordString){
+        if(isalpha(letter)){
+            newWord += letter;
+        }
+        else if(letter == '-'){
+            wordSet->insert(newWord);
+            newWord = "";
+        }
     }
+
+    // To catch last word in string
+    if(!newWord.empty())
+        wordSet->insert(newWord);
 }
