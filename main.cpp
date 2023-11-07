@@ -1,11 +1,12 @@
 #include <iostream>
 #include <set>
 #include <fstream>
+#include <cctype>
 // I've read that 'using namespace std' is considered bad practice so from here
 // onward I will be omitting any uses of it in my code.
 
 // Function prototype for handling strings with '-' in them
-void hyphenatedWords(std::string, std::set<std::string>*);
+void punctuationatedWords(std::string, std::set<std::string>*);
 
 int main(){
     std::ifstream inFile("TheRaven.txt");
@@ -25,19 +26,19 @@ int main(){
     // While there are words in the file
     while(inFile >> word){
         std::string charWord = "";
-        bool hyphen = false;
+        bool punctuation = false;
 
-        // Find if the current word is hyphenated, pass to hyphenatedWords() if true.
+        // Find if the current word is punctuationated, pass to punctuationatedWords() if true.
         for(char letter : word){
-            if((letter == '-' || letter == '!') && hyphen == false){
-                hyphenatedWords(word, &words);
-                hyphen = true;
+            if(std::ispunct(letter) && punctuation == false){
+                punctuationatedWords(word, &words);
+                punctuation = true;
             }
         }
 
 
-        // If current word is not hyphenated, nothing else needs to be done.
-        if(!hyphen){
+        // If current word is not punctuationated, nothing else needs to be done.
+        if(!punctuation){
             for(char letter : word){
                 if(isalnum(letter))
                     charWord += letter;
@@ -53,8 +54,8 @@ int main(){
     }
 }
 
-// Function that takes hyphenated words, splits them into individual words, adds them to the set.
-void hyphenatedWords(std::string wordString, std::set<std::string> *wordSet){
+// Function that takes punctuationated words, splits them into individual words, adds them to the set.
+void punctuationatedWords(std::string wordString, std::set<std::string> *wordSet){
     std::string newWord;
 
     // Iterate through each character in wordString
@@ -62,7 +63,7 @@ void hyphenatedWords(std::string wordString, std::set<std::string> *wordSet){
         if(isalpha(letter)){
             newWord += letter;
         }
-        else if(letter == '-'){
+        else if(ispunct(letter)){
             wordSet->insert(newWord);
             newWord = "";
         }
